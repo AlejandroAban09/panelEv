@@ -1,0 +1,7 @@
+{
+    "require": {
+        "yidas/codeigniter-model": "^2.19",
+        "google/cloud-vision": "^1.7",
+        "phpmailer/phpmailer": "^7.0"
+    }
+}

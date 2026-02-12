@@ -1,0 +1,179 @@
+<nav class="top-navbar d-flex justify-content-between align-items-center" id="top-navbar">
+    <span class="btn-toggle-sidebar" onclick="toggleSidebar()">☰</span>
+    <div class="fw-semibold">Supervisores</div>
+    <div><?= $usuario['usuario_nombre'] ?? 'Usuario' ?></div>
+</nav>
+
+<div class="content" id="main-content">
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="fw-bold" style="color: #040051;">
+            <span><img class="img-fluid" src="assets/images/supervisor-azul.png" alt="" width="35" style="margin-top: -5px;"></span>
+            Supervisores
+        </h2>
+
+        <a href="<?= base_url('supervisores/crear') ?>" class="btn btn-primary rounded-pill px-3 shadow-sm">
+            <i class="bi bi-plus-circle"></i> <span class="d-none d-md-inline">Nuevo</span>
+        </a>
+    </div>
+
+    <div class="card shadow-sm border-0">
+        <div class="card-body">
+
+            <div class="table-responsive">
+                <table id="tablaSupervisores" class="table table-striped table-hover datatable nowrap align-middle w-100">
+                    <thead class="table-light">
+                        <tr>
+                            <th>ID</th>
+                            <th data-priority="1">Nombre</th>
+                            <th data-priority="2"><i class="bi bi-whatsapp"></i> Whatsapp</th>
+                            <th data-priority="3">Tiendas</th>
+                            <th data-priority="4">Estatus</th>
+                            <th>Email</th>
+                            <th class="text-end">Acciones</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        <?php foreach ($supervisores as $s): ?>
+                            <tr>
+                                <td><?= $s->id ?></td>
+                                <td><?= $s->nombre ?></td>
+                                <!-- whatsapp -->
+                                <td>
+                                    <span class="badge bg-info bg-opacity-10 text-success border border-success border-opacity-25 rounded-pill">
+                                        <?= $s->telefono ?>
+                                    </span>
+                                </td>
+                                <!-- tiendas -->
+                                <td>
+                                    <?php
+                                    $tiendas = $s->tiendas_nombres ? explode(', ', $s->tiendas_nombres) : [];
+                                    $max_visible = 2;
+                                    $total = count($tiendas);
+                                    ?>
+                                    <?php if ($total == 0): ?>
+                                        <span class="text-muted small">Sin asignación</span>
+                                    <?php else: ?>
+                                        <div class="d-flex flex-column gap-1">
+                                            <?php foreach (array_slice($tiendas, 0, $max_visible) as $tienda): ?>
+                                                <span class="badge bg-light text-dark border fw-normal text-start text-truncate" style="max-width: 200px;">
+                                                    <i class="bi bi-shop me-1 text-secondary"></i><?= $tienda ?>
+                                                </span>
+                                            <?php endforeach; ?>
+                                            <?php if ($total > $max_visible): ?>
+                                                <button type="button"
+                                                    class="btn btn-link btn-sm text-decoration-none p-0 text-start"
+                                                    onclick="verTiendas(<?= $s->id ?>, '<?= addslashes($s->nombre) ?>', '<?= addslashes($s->tiendas_nombres) ?>')">
+                                                    <span class="badge bg-soft-primary text-primary fw-semibold">
+                                                        +<?= ($total - $max_visible) ?> más...
+                                                    </span>
+                                                </button>
+                                            <?php endif; ?>
+                                        </div>
+                                    <?php endif; ?>
+                                    
+                                </td>
+                                <td>
+                                    <?= $s->activo
+                                        ? '<span class="badge bg-success">Activo</span>'
+                                        : '<span class="badge bg-secondary">Inactivo</span>' ?>
+                                </td>
+                                <td><?= $s->email ?></td>
+                                <td class="text-end">
+                                    <div class="d-inline-flex gap-2">
+                                        <a href="<?= base_url('supervisores/editar/' . $s->id) ?>"
+                                            class="btn btn-soft-primary btn-action"
+                                            data-bs-toggle="tooltip" title="Editar">
+                                            <i class="bi bi-pencil"></i>
+                                        </a>
+                                        <button type="button"
+                                            class="btn btn-soft-danger btn-action"
+                                            onclick="confirmarEliminacion(<?= $s->id ?>, '<?= addslashes($s->nombre) ?>')"
+                                            data-bs-toggle="tooltip" title="Eliminar">
+                                            <i class="bi bi-trash"></i>
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                        <?php endforeach; ?>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Eliminar -->
+    <div class="modal fade" id="modalEliminar" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content border-0 shadow-lg rounded-4">
+                <div class="modal-header bg-danger text-white rounded-top-4">
+                    <h5 class="modal-title"><i class="bi bi-exclamation-triangle"></i> Confirmar eliminación</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <p class="mb-0 fs-5">
+                        ¿Seguro que deseas eliminar al supervisor:<br>
+                        <strong id="modalNombre"></strong>?
+                    </p>
+                </div>
+                <div class="modal-footer d-flex justify-content-end gap-2">
+                    <button type="button" class="btn btn-secondary rounded-pill" data-bs-dismiss="modal">Cancelar</button>
+                    <a id="btnEliminarConfirmado" href="#" class="btn btn-danger rounded-pill px-4">Eliminar</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Ver Tiendas -->
+    <div class="modal fade" id="modalTiendas" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+            <div class="modal-content border-0 shadow-lg rounded-4">
+                <div class="modal-header bg-white border-bottom-0 pb-0">
+                    <div>
+                        <h5 class="modal-title fw-bold" style="color: #040051;">Tiendas asignadas</h5>
+                        <p class="text-muted small mb-0" id="modalTiendasSupervisor"></p>
+                    </div>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body pt-3">
+                    <div class="list-group list-group-flush" id="listaTiendasModal">
+                        <!-- Tiendas JS -->
+                    </div>
+                </div>
+                <div class="modal-footer border-top-0">
+                    <button type="button" class="btn btn-secondary rounded-pill w-100" data-bs-dismiss="modal">Cerrar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<script>
+    function confirmarEliminacion(id, nombre) {
+        document.getElementById("modalNombre").innerText = nombre;
+        document.getElementById("btnEliminarConfirmado").href = "<?= base_url('supervisores/eliminar/') ?>" + id;
+        var myModal = new bootstrap.Modal(document.getElementById('modalEliminar'));
+        myModal.show();
+    }
+
+    function verTiendas(id, nombre, tiendasStr) {
+        document.getElementById("modalTiendasSupervisor").innerText = nombre;
+        const lista = document.getElementById("listaTiendasModal");
+        lista.innerHTML = '';
+
+        if (!tiendasStr) return;
+
+        const tiendas = tiendasStr.split(', ');
+        tiendas.forEach(t => {
+            const item = document.createElement('div');
+            item.className = 'list-group-item px-0 border-0 d-flex align-items-center gap-2';
+            item.innerHTML = `<i class="bi bi-shop text-primary bg-primary bg-opacity-10 p-2 rounded-circle"></i> <span class="fw-medium">${t}</span>`;
+            lista.appendChild(item);
+        });
+
+        var myModal = new bootstrap.Modal(document.getElementById('modalTiendas'));
+        myModal.show();
+    }
+</script>
