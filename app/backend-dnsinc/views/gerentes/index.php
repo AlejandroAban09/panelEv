@@ -1,14 +1,26 @@
 <nav class="top-navbar d-flex justify-content-between align-items-center" id="top-navbar">
-    <span class="btn-toggle-sidebar" onclick="toggleSidebar()">☰</span>
-    <div class="fw-semibold">Gerentes</div>
-    <div><?= $usuario['usuario_nombre'] ?? 'Usuario' ?></div>
+    <div class="d-flex align-items-center gap-3">
+        <span class="btn-toggle-sidebar" onclick="toggleSidebar()">☰</span>
+        <div class="fw-semibold">Gerentes</div>
+    </div>
+
+    <div class="d-flex align-items-center gap-3">
+        <?php $themeMode = get_cookie('theme_mode'); ?>
+        <a href="#" class="text-white theme-switcher" style="font-size: 1.2rem;">
+            <i class="bi <?= ($themeMode === 'dark') ? 'bi-sun-fill' : 'bi-moon-fill' ?>"></i>
+        </a>
+        <div><?= $usuario['usuario_nombre'] ?? 'Usuario' ?></div>
+    </div>
 </nav>
 <!-- contenido -->
 <div class="content" id="main-content">
     <!-- titulo -->
     <div class="d-flex justify-content-between align-items-center mb-4">
-        <h2 class="fw-bold" style="color: #040051;">
-            <span><img class="img-fluid" src="assets/images/gerente-azul.png" alt="" width="35" style="margin-top: -5px;"></span>
+        <h2 class="fw-bold text-brand">
+            <span>
+                <img class="img-fluid icon-light-mode" src="assets/images/gerente-azul.png" alt="" width="35" style="margin-top: -5px;">
+                <img class="img-fluid icon-dark-mode" src="assets/images/gerente-blanco.png" alt="" width="35" style="margin-top: -5px; display: none;">
+            </span>
             Gerentes
         </h2>
         <!-- boton de crear -->

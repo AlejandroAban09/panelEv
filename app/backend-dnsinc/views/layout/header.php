@@ -244,53 +244,175 @@
         }
 
         /* --- DARK MODE --- */
+        /* Custom Stat Cards (Light Mode Default) */
+        .card-stat {
+            background-color: #cae4ed;
+            color: #040051;
+            transition: all 0.3s ease;
+        }
+
+        .stat-label,
+        .stat-value,
+        .text-brand {
+            color: #040051;
+        }
+
+        /* --- DARK MODE (Coherent Slate/Dark Blue Theme) --- */
         body.dark-mode {
-            background-color: #121212;
-            color: #e0e0e0;
+            background-color: #0f172a;
+            /* Slate 900 - Dark Blue-Gray */
+            color: #cbd5e1;
+            /* Slate 300 - Soft Text */
         }
 
         body.dark-mode .sidebar {
-            background: #1a1a1a;
-            border-right: 1px solid #333;
+            background: #020617;
+            /* Slate 950 - Deepest Blue-Black */
+            border-right: 1px solid #1e293b;
         }
 
         body.dark-mode .top-navbar {
-            background: #1a1a1a;
-            border-bottom: 1px solid #333;
-            color: #fff;
+            background: #020617;
+            border-bottom: 1px solid #1e293b;
+            color: #e2e8f0;
         }
 
         body.dark-mode .card {
-            background-color: #1e1e1e;
-            border-color: #333;
-            color: #e0e0e0;
+            background-color: #1e293b;
+            /* Slate 800 */
+            border-color: #334155;
+            /* Slate 700 */
+            color: #cbd5e1;
+        }
+
+        /* Specific Override for Stat Cards in Dark Mode */
+        body.dark-mode .card-stat {
+            background-color: #1e293b;
+            border: 1px solid #334155;
+        }
+
+        body.dark-mode .stat-label {
+            color: #94a3b8;
+            /* Slate 400 - Muted */
+        }
+
+        body.dark-mode .stat-value {
+            color: #f8fafc;
+            /* Slate 50 - Bright */
+        }
+
+        body.dark-mode .text-brand {
+            color: #f8fafc !important;
         }
 
         body.dark-mode .form-control,
         body.dark-mode .form-select {
-            background-color: #2d2d2d;
-            border-color: #444;
-            color: #fff;
+            background-color: #0f172a;
+            border-color: #334155;
+            color: #e2e8f0;
         }
 
+        body.dark-mode .form-control::placeholder {
+            color: #64748b;
+        }
+
+        /* Dark Mode Tables - Low Contrast & Consistent */
         body.dark-mode .table {
-            color: #e0e0e0;
-            border-color: #333;
+            --bs-table-bg: #1e293b;
+            --bs-table-color: #cbd5e1;
+            --bs-table-striped-bg: #0f172a;
+            --bs-table-striped-color: #cbd5e1;
+            --bs-table-hover-bg: #334155;
+            --bs-table-hover-color: #fff;
+            --bs-table-border-color: #334155;
+            color: #cbd5e1;
+            border-color: #334155;
+        }
+
+        body.dark-mode .table thead th {
+            background-color: #020617;
+            /* Slate 950 for Header */
+            color: #f8fafc;
+            border-bottom: 2px solid #334155;
+            vertical-align: middle;
         }
 
         body.dark-mode .table-striped>tbody>tr:nth-of-type(odd)>* {
-            background-color: #2c2c2c;
-            color: #e0e0e0;
+            background-color: var(--bs-table-striped-bg);
+            color: var(--bs-table-striped-color);
+            box-shadow: none;
         }
 
-        body.dark-mode .table-light {
-            --bs-table-bg: #2d2d2d;
-            --bs-table-color: #fff;
+        body.dark-mode .table-striped>tbody>tr:nth-of-type(even)>* {
+            background-color: var(--bs-table-bg);
+            color: var(--bs-table-color);
+        }
+
+        /* Dark Mode Utilities Overrides */
+        body.dark-mode .bg-light {
+            background-color: #334155 !important;
+            color: #f1f5f9 !important;
+            border-color: #475569 !important;
+        }
+
+        body.dark-mode .bg-white {
+            background-color: #1e293b !important;
+            color: #f1f5f9 !important;
+        }
+
+        body.dark-mode .text-dark {
+            color: #f1f5f9 !important;
+        }
+
+        body.dark-mode .text-secondary {
+            color: #94a3b8 !important;
+        }
+
+        body.dark-mode .text-muted {
+            color: #cbd5e1 !important;
+            /* Fix for modal subtitle visibility */
+        }
+
+        /* Dark Mode List Groups (Modals) */
+        body.dark-mode .list-group-item {
+            background-color: transparent;
+            color: #cbd5e1;
+            border-color: #334155;
+        }
+
+        /* Specific Modal Fixes */
+        body.dark-mode .modal-header,
+        body.dark-mode .modal-footer {
+            background-color: #1e293b !important;
+            /* Force override inline bg-white */
+            border-color: #334155;
+        }
+
+        body.dark-mode .btn-close {
+            filter: invert(1) grayscale(100%) brightness(200%);
+        }
+
+        /* Fix Badge Icons */
+        body.dark-mode .badge i {
+            color: inherit !important;
+            /* Inherit from parent badge text color */
+        }
+
+        /* Select2 Dropdown Dark Mode */
+        body.dark-mode .select2-dropdown {
+            background-color: #1e293b;
+            border-color: #334155;
+            color: #cbd5e1;
+        }
+
+        body.dark-mode .select2-results__option[aria-selected=true] {
+            background-color: #334155;
         }
 
         body.dark-mode .modal-content {
-            background-color: #1a1a1a;
-            color: #e0e0e0;
+            background-color: #1e293b;
+            border: 1px solid #475569;
+            color: #cbd5e1;
         }
 
         body.dark-mode h1,
@@ -300,19 +422,63 @@
         body.dark-mode h5,
         body.dark-mode h6,
         body.dark-mode .text-dark {
-            color: #f5f5f5 !important;
+            color: #f1f5f9 !important;
+        }
+
+        /* Fix Select2 in Dark Mode */
+        body.dark-mode .select2-container--default .select2-selection--single {
+            background-color: #0f172a;
+            border-color: #334155;
+        }
+
+        body.dark-mode .select2-container--default .select2-selection--single .select2-selection__rendered {
+            color: #cbd5e1;
+        }
+
+        /* Theme Icons Toggle */
+        body.dark-mode .icon-light-mode {
+            display: none !important;
+        }
+
+        body.dark-mode .icon-dark-mode {
+            display: inline-block !important;
+        }
+
+        /* Global Smooth Transition for Theme Switch */
+        body,
+        .sidebar,
+        .top-navbar,
+        .content,
+        .card,
+        .table,
+        .table> :not(caption)>*>*,
+        .modal-content,
+        .form-control,
+        .form-select,
+        .list-group-item,
+        .btn,
+        h1,
+        h2,
+        h3,
+        h4,
+        h5,
+        h6,
+        p,
+        span,
+        i,
+        a,
+        div {
+            transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
         }
     </style>
-</head>
+</head><?php
+        // NUEVO: Leemos cookies para Sidebar y Tema
+        $sidebarState = get_cookie('sidebar_state');
+        $themeMode    = get_cookie('theme_mode');
 
-<?php
-// NUEVO: Leemos cookies para Sidebar y Tema
-$sidebarState = get_cookie('sidebar_state');
-$themeMode    = get_cookie('theme_mode');
-
-$bodyClass = '';
-if ($sidebarState === 'toggled') $bodyClass .= ' sidebar-toggled';
-if ($themeMode === 'dark')       $bodyClass .= ' dark-mode';
-?>
+        $bodyClass = '';
+        if ($sidebarState === 'toggled') $bodyClass .= ' sidebar-toggled';
+        if ($themeMode === 'dark')       $bodyClass .= ' dark-mode';
+        ?>
 
 <body class="<?= trim($bodyClass) ?>">

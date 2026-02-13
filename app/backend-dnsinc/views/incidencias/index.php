@@ -1,13 +1,28 @@
 <nav class="top-navbar d-flex justify-content-between align-items-center" id="top-navbar">
-    <span class="btn-toggle-sidebar" onclick="toggleSidebar()">☰</span>
-    <div class="fw-semibold">Tipos de Evidencias</div>
-    <div><?= $usuario['usuario_nombre'] ?></div>
+    <div class="d-flex align-items-center gap-3">
+        <span class="btn-toggle-sidebar" onclick="toggleSidebar()">☰</span>
+        <div class="fw-semibold">Tipos de Evidencias</div>
+    </div>
+
+    <div class="d-flex align-items-center gap-3">
+        <?php $themeMode = get_cookie('theme_mode'); ?>
+        <a href="#" class="text-white theme-switcher" style="font-size: 1.2rem;">
+            <i class="bi <?= ($themeMode === 'dark') ? 'bi-sun-fill' : 'bi-moon-fill' ?>"></i>
+        </a>
+        <div><?= $usuario['usuario_nombre'] ?></div>
+    </div>
 </nav>
 
 <div class="content" id="main-content">
 
     <div class="d-flex justify-content-between align-items-center mb-4">
-        <h2 class="fw-bold" style="color: #040051;"><span> <img class="img-fluid" src="assets/images/tipos.png" alt="" width="35" style="margin-top: -5px;"> </span>Tipos de Evidencia</h2>
+        <h2 class="fw-bold text-brand">
+            <span>
+                <img class="img-fluid icon-light-mode" src="assets/images/tipos.png" alt="" width="35" style="margin-top: -5px;">
+                <img class="img-fluid icon-dark-mode" src="assets/images/tipos-white.png" alt="" width="35" style="margin-top: -5px; display: none;">
+            </span>
+            Tipos de Evidencia
+        </h2>
 
         <?php
         if ($count < 9) {

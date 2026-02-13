@@ -20,36 +20,36 @@
 <div class="content" id="main-content">
 
     <div class="d-flex justify-content-between align-items-center mb-4">
-        <h2 class="fw-bold" style="color: #040051;"><span> <img class="img-fluid" src="assets/images/home.png" alt="" width="35" style="margin-top: -11px;"> </span>Panel</h2>
+        <h2 class="fw-bold text-brand"><span> <img class="img-fluid" src="assets/images/home.png" alt="" width="35" style="margin-top: -11px;"> </span>Panel</h2>
     </div>
 
     <div class="row g-4">
 
         <div class="col-md-3">
-            <div class="card shadow-sm border-0 p-3" style="background: #cae4ed;">
-                <h5 class="" style="color: #040051;">Encargados</h5>
-                <h2 class="fw-bold" style="color: #040051;"><?= $tot_encargados ?></h2>
+            <div class="card shadow-sm border-0 p-3 card-stat">
+                <h5 class="stat-label">Encargados</h5>
+                <h2 class="fw-bold stat-value"><?= $tot_encargados ?></h2>
             </div>
         </div>
 
         <div class="col-md-3">
-            <div class="card shadow-sm border-0 p-3" style="background: #cae4ed;">
-                <h5 class="" style="color: #040051;">Tiendas</h5>
-                <h2 class="fw-bold" style="color: #040051;"><?= $tot_tiendas ?></h2>
+            <div class="card shadow-sm border-0 p-3 card-stat">
+                <h5 class="stat-label">Tiendas</h5>
+                <h2 class="fw-bold stat-value"><?= $tot_tiendas ?></h2>
             </div>
         </div>
 
         <div class="col-md-3">
-            <div class="card shadow-sm border-0 p-3" style="background: #cae4ed;">
-                <h5 class="" style="color: #040051;">Tipos de evidencia</h5>
-                <h2 class="fw-bold" style="color: #040051;"><?= $tot_tipos ?></h2>
+            <div class="card shadow-sm border-0 p-3 card-stat">
+                <h5 class="stat-label">Tipos de evidencia</h5>
+                <h2 class="fw-bold stat-value"><?= $tot_tipos ?></h2>
             </div>
         </div>
 
         <div class="col-md-3">
-            <div class="card shadow-sm border-0 p-3" style="background: #cae4ed;">
-                <h5 class="" style="color: #040051;">Evidencias registradas</h5>
-                <h2 class="fw-bold" style="color: #040051;"><?= $tot_tickets ?></h2>
+            <div class="card shadow-sm border-0 p-3 card-stat">
+                <h5 class="stat-label">Evidencias registradas</h5>
+                <h2 class="fw-bold stat-value"><?= $tot_tickets ?></h2>
             </div>
         </div>
 
@@ -66,7 +66,7 @@
             // Buscamos si el clic fue en un enlace <a> o un elemento dentro de él
             let link = e.target.closest('a');
 
-            // Si es un enlace real y no un ancla vacía o javascript
+            // Si es un enlace real      y no un ancla vacía o javascript
             if (link && link.href && !link.href.startsWith('javascript:') && link.getAttribute('href') !== '#') {
                 formChanged = false; // "Perdonamos" la alerta
             }

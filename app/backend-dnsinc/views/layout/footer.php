@@ -160,7 +160,7 @@
         setTimeout(recalcTables, 600);
     }
 
-    // Toggle Dark Mode
+    // Toggle Dark Mode Logic
     $(document).on('click', '.theme-switcher', function(e) {
         e.preventDefault();
         $('body').toggleClass('dark-mode');
@@ -168,13 +168,9 @@
         let theme = $('body').hasClass('dark-mode') ? 'dark' : '';
         saveConfig('theme_mode', theme);
 
-        // Update icon if present
-        let icon = $(this).find('i');
-        if (theme === 'dark') {
-            icon.removeClass('bi-moon-fill').addClass('bi-sun-fill');
-        } else {
-            icon.removeClass('bi-sun-fill').addClass('bi-moon-fill');
-        }
+        // Update icon globally (if multiple exist, update all)
+        $('.theme-switcher i').removeClass('bi-moon-fill bi-sun-fill')
+            .addClass(theme === 'dark' ? 'bi-sun-fill' : 'bi-moon-fill');
     });
 
     $(function() {
