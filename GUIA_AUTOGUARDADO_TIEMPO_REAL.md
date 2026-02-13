@@ -7,7 +7,7 @@ El sistema detecta automáticamente cuando un usuario escribe en un formulario m
 
 Es importante entender la diferencia entre las dos aproximaciones que intentamos:
 
-| Característica | **Método PHP (Cookies)** ❌ | **Método JS (LocalStorage)** ✅ |
+| Característica | **Método PHP (Cookies)** | **Método JS (LocalStorage)** |
 | :--- | :--- | :--- |
 | **Cuándo Guarda** | Solo al **ENVIAR** (Submit) el formulario al servidor. | Al **ESCRIBIR** (Input/Change) en tiempo real. |
 | **Persistencia** | Requiere una recarga de página para "recordar". | Persiste instantáneamente sin recargar. |
@@ -16,7 +16,7 @@ Es importante entender la diferencia entre las dos aproximaciones que intentamos
 
 ---
 
-## 🛠️ Cómo Implementarlo en Otros Proyectos
+##  Cómo Implementarlo en Otros Proyectos
 
 Para replicar esta funcionalidad en cualquier otro formulario o proyecto, sigue estos 3 pasos sencillos.
 
@@ -115,7 +115,7 @@ Si estás en un formulario de **Edición**, el ID debe ser único para ese regis
 
 ---
 
-## ⚠️ Aspectos Importantes a Considerar
+##  Aspectos Importantes a Considerar
 
 1.  **Seguridad (Passwords):**
     *   El script está configurado para **ignorar** inputs de tipo `password`. Nunca se deben guardar contraseñas en `localStorage` o Cookies inseguras, ya que son texto plano accesible desde la consola del navegador.
@@ -130,6 +130,6 @@ Si estás en un formulario de **Edición**, el ID debe ser único para ese regis
     *   Usamos un prefijo `autosave_` + `ID_DEL_FORM` + `NAME_DEL_INPUT`. Esto asegura que un input llamado `nombre` en el formulario de "Clientes" no sobrescriba al input `nombre` del formulario de "Productos".
     *   **Condición:** Asegúrate de que tus inputs tengan el atributo `name="..."`.
 
-## ✅ Conclusión
+##  Conclusión
 
 Este sistema proporciona una experiencia de usuario (UX) mucho más robusta y "a prueba de fallos", salvando el trabajo del usuario en el navegador localmente sin necesidad de peticiones al servidor ni bases de datos temporales complejas.
