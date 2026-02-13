@@ -1,135 +1,164 @@
-# Guía de Implementación: Autoguardado en Formularios
+# Documentación Técnica: Sistema de Persistencia de Formularios
 
-
-El sistema detecta automáticamente cuando un usuario escribe en un formulario marcado y guarda sus datos en el navegador en tiempo real. Si el usuario interrumpe su sesión y vuelve más tarde, los campos se restauran automáticamente. Al guardar el formulario exitosamente, los datos temporales se limpian.
-
-### Diferencias Clave: ¿Por qué PHP (Cookies) no funcionó?
-
-Es importante entender la diferencia entre las dos aproximaciones que intentamos:
-
-| Característica | **Método PHP (Cookies)** | **Método JS (LocalStorage)** |
-| :--- | :--- | :--- |
-| **Cuándo Guarda** | Solo al **ENVIAR** (Submit) el formulario al servidor. | Al **ESCRIBIR** (Input/Change) en tiempo real. |
-| **Persistencia** | Requiere una recarga de página para "recordar". | Persiste instantáneamente sin recargar. |
-| **Caso de Uso** | Recordar preferencias (Filtros, Tema Oscuro). | Recordar borradores no enviados (Autoguardado). |
-| **Problema** | Si el usuario escribe y cierra la pestaña *sin enviar*, **se pierde todo**, porque el servidor nunca recibió los datos. | Si el usuario escribe y cierra la pestaña, el navegador ya lo guardó localmente. **No se pierde nada.** |
+**Proyecto:** PanelEv - Dunosusa  
+**Módulo:** Core / UI UX  
+**Fecha de Actualización:** 13 de Febrero de 2026  
+**Estatus:** Implementado en Producción (Módulo Supervisores)
 
 ---
 
-##  Cómo Implementarlo en Otros Proyectos
+## 1. Introducción y Contexto
 
-Para replicar esta funcionalidad en cualquier otro formulario o proyecto, sigue estos 3 pasos sencillos.
+El objetivo de este componente es resolver una fricción crítica en la experiencia de usuario (UX): **la pérdida de datos en formularios extensos**.
 
-### Paso 1: Incluir el Script Global (Una vez por proyecto)
+Los usuarios operativos a menudo son interrumpidos, pierden conexión o recargan la página accidentalmente. La solución implementada garantiza que el progreso de captura se guarde localmente en tiempo real, restaurándose automáticamente al regresar, sin intervención del servidor.
 
-Asegúrate de tener este script en tu **Footer** o archivo JS principal (`layout/footer.php` o `assets/js/main.js`).
+---
 
+## 2. Arquitectura de la Solución (Modelo Híbrido)
+
+Se decidió utilizar una arquitectura híbrida para manejar la persistencia, dividiendo la responsabilidad entre el Navegador (Cliente) y CodeIgniter (Servidor).
+
+### 2.1. Capa Cliente: Autoguardado (Drafts)
+**Tecnología:** JavaScript + LocalStorage API.  
+**Responsabilidad:** Persistencia inmediata de borradores *no enviados*.
+
+**Implementación (Código JS):**
+El script escucha eventos `input` y guarda en `localStorage`.
 ```javascript
-/* assets/js/auto-save.js */
-document.addEventListener('DOMContentLoaded', function() {
-    // 1. Detectar formularios con la clase .auto-save
-    const forms = document.querySelectorAll('form.auto-save');
+// Ubicación: views/layout/footer.php (antes del </body>)
+const forms = document.querySelectorAll('form.auto-save');
+forms.forEach(form => {
+    // Restaurar al cargar
+    const savedValue = localStorage.getItem(`autosave_${uniqueId}_${input.name}`);
+    if (savedValue) input.value = savedValue;
 
-    forms.forEach(form => {
-        // 2. Obtener ID único (Vital para no mezclar datos de distintos forms)
-        const uniqueId = form.getAttribute('data-autosave-id');
-        if (!uniqueId) return;
-
-        const inputs = form.querySelectorAll('input:not([type="hidden"]):not([type="password"]), select, textarea');
-
-        // 3. RESTAURAR DATOS AL CARGAR (Recuperar del LocalStorage)
-        inputs.forEach(input => {
-            const key = `autosave_${uniqueId}_${input.name}`;
-            const savedValue = localStorage.getItem(key);
-
-            if (savedValue) {
-                if (input.type === 'checkbox' || input.type === 'radio') {
-                    if (input.value === savedValue) input.checked = true;
-                } else {
-                    input.value = savedValue;
-                }
-            }
-        });
-
-        // 4. GUARDAR DATOS AL ESCRIBIR (Input / Change)
-        const saveHandler = (e) => {
-            const input = e.target;
-            // Ignorar passwords y campos ocultos por seguridad
-            if (!input.name || input.type === 'password' || input.type === 'hidden') return;
-            
-            const key = `autosave_${uniqueId}_${input.name}`;
-            let valueToSave = input.value;
-
-            // Manejo especial para Checkboxes/Radios
-            if (input.type === 'checkbox' || input.type === 'radio') {
-                if (input.checked) valueToSave = input.value;
-                else return; 
-            }
-            
-            localStorage.setItem(key, valueToSave); // ¡Guardado!
-        };
-
-        form.addEventListener('input', saveHandler);
-        form.addEventListener('change', saveHandler);
-
-        // 5. LIMPIEZA: BORRAR DATOS AL ENVIAR EXITOSAMENTE
-        form.addEventListener('submit', () => {
-             inputs.forEach(input => {
-                const key = `autosave_${uniqueId}_${input.name}`;
-                localStorage.removeItem(key);
-            });
-        });
+    // Guardar al escribir
+    form.addEventListener('input', (e) => {
+        localStorage.setItem(`autosave_${uniqueId}_${e.target.name}`, e.target.value);
     });
 });
 ```
 
-### Paso 2: Marcar el Formulario HTML
+### 2.2. Capa Servidor: Recuperación de Errores
+**Tecnología:** PHP (CodeIgniter Standard, Form Validation).  
+**Responsabilidad:** Persistencia de datos tras un intento de envío fallido (Error de Validación).
 
-En tu vista (ej. `crear.php`), solo necesitas agregar dos atributos a la etiqueta `<form>`:
+**Implementación (Controlador):**
+```php
+// Ubicación: controllers/Supervisores.php
+public function guardar() {
+    $this->form_validation->set_rules('nombre', 'Nombre', 'required');
 
-1.  **Clase:** `class="auto-save"`
-2.  **ID Único:** `data-autosave-id="nombre_unico_del_form"`
+    if ($this->form_validation->run() == FALSE) {
+        // ERROR: La validación falló.
+        // CodeIgniter mantiene los datos del POST en memoria temporalmente.
+        $this->layout->view('supervisores/crear'); 
+    } else {
+        // ÉXITO: Guardar en BD.
+        $this->msupervisores->insert($data);
+        // El script JS detectará el 'submit' exitoso y borrará el localStorage.
+    }
+}
+```
 
-**Ejemplo de Implementación:**
+---
 
-```html
-<!-- Formulario de Creación -->
-<form action="ruta/guardar" method="post" class="auto-save" data-autosave-id="producto_nuevo">
-    <!-- Tus inputs normales -->
-    <input type="text" name="nombre" required>
+## 3. Detalles de Implementación (Dónde y Cómo)
+
+### 3.1. Núcleo del Sistema (`assets/js/auto-save.js`)
+El script lógico no reside en cada vista, sino que se ha centralizado para facilitar el mantenimiento.
+*   **Ubicación:** Inyectado directamente en `views/layout/footer.php` (para asegurar carga global).
+*   **Selector:** Actúa sobre cualquier `<form>` que tenga la clase `.auto-save`.
+*   **Manejo de IDs:** Usa el atributo `data-autosave-id` para generar claves únicas.
+
+### 3.2. Integración en Vistas (HTML + PHP)
+Para activar la funcionalidad en un nuevo formulario, se requieren dos configuraciones simultáneas:
+
+**Ejemplo Completo - Formulario de Creación (`crear.php`):**
+```php
+<!-- 1. class="auto-save": Activa el script JS -->
+<!-- 2. data-autosave-id="...": Identificador único para el localStorage -->
+<form action="<?= $action ?>" method="post" class="auto-save" data-autosave-id="supervisor_nuevo">
+
+    <label>Nombre</label>
+    <!-- 3. set_value(): Recupera el valor si falló la validación PHP -->
+    <!-- El JS recuperará el valor si se cerró la pestaña (localStorage) -->
+    <input type="text" name="nombre" value="<?= set_value('nombre') ?>" required>
+
 </form>
 ```
 
-### Paso 3: Considerar IDs Dinámicos (Para Edición)
-
-Si estás en un formulario de **Edición**, el ID debe ser único para ese registro específico. De lo contrario, si editas el "Producto A" y luego el "Producto B", verás los datos del A en el B.
-
-**Ejemplo PHP para Edición:**
-
+**Ejemplo Completo - Formulario de Edición (`editar.php`):**
+Es vital usar un ID dinámico para evitar mezclar datos de distintos registros.
 ```php
-<!-- Usamos el ID del registro dentro del ID del autosave -->
-<form action="..." method="post" class="auto-save" data-autosave-id="producto_<?= $producto->id ?>">
-    <input type="text" name="nombre" value="<?= $producto->nombre ?>">
+<!-- ID Dinámico: supervisor_15, supervisor_16, etc. -->
+<form method="post" class="auto-save" data-autosave-id="supervisor_<?= $supervisor->id ?>">
+
+    <label>Nombre</label>
+    <!-- set_value() con segundo parámetro para el valor actual de la BD -->
+    <input type="text" name="nombre" value="<?= set_value('nombre', $supervisor->nombre) ?>">
+
 </form>
 ```
 
 ---
 
-##  Aspectos Importantes a Considerar
+## 4. Estrategia de Cookies y Futuras Implementaciones
 
-1.  **Seguridad (Passwords):**
-    *   El script está configurado para **ignorar** inputs de tipo `password`. Nunca se deben guardar contraseñas en `localStorage` o Cookies inseguras, ya que son texto plano accesible desde la consola del navegador.
+Para funcionalidades futuras, se recomienda el uso de **Cookies de Servidor (PHP Helper)** en estos escenarios:
 
-2.  **Campos Ocultos (Hidden):**
-    *   También se ignoran los `input type="hidden"`. Generalmente estos contienen IDs o tokens que no deben ser manipulados o persistidos manualmente por el usuario.
+### 4.1. Escenario A: Preferencias de Usuario (Persistentes)
+Configuraciones como "Tema Oscuro" o "Sidebar Colapsado".
 
-3.  **Limpieza Automática:**
-    *   Es crucial que el script limpie el almacenamiento al hacer `submit`. Si no lo hace, el usuario guardará el formulario, y al volver a entrar para crear otro registro nuevo, verá los datos del anterior. (Nuestro script ya maneja esto en el evento `submit`).
+```php
+// SET (Controlador)
+$this->input->set_cookie([
+    'name'   => 'theme_mode',
+    'value'  => 'dark',
+    'expire' => 31536000 // 1 año
+]);
 
-4.  **Colisiones de Nombres:**
-    *   Usamos un prefijo `autosave_` + `ID_DEL_FORM` + `NAME_DEL_INPUT`. Esto asegura que un input llamado `nombre` en el formulario de "Clientes" no sobrescriba al input `nombre` del formulario de "Productos".
-    *   **Condición:** Asegúrate de que tus inputs tengan el atributo `name="..."`.
+// GET (Vista/Controlador)
+$theme = $this->input->cookie('theme_mode', TRUE);
+```
 
-##  Conclusión
+### 4.2. Escenario B: Seguridad y Sesiones
+Para datos sensibles, usar siempre Sesiones.
 
-Este sistema proporciona una experiencia de usuario (UX) mucho más robusta y "a prueba de fallos", salvando el trabajo del usuario en el navegador localmente sin necesidad de peticiones al servidor ni bases de datos temporales complejas.
+```php
+// SET
+$this->session->set_userdata('user_id', 123);
+
+// GET
+$user_id = $this->session->userdata('user_id');
+```
+
+---
+
+## 5. Guía de Mantenimiento y Troubleshooting
+
+### 5.1. Limpieza de Datos
+*   **Problema:** El usuario guarda, pero al volver a entrar ve los datos viejos.
+*   **Causa:** El JS borra el `localStorage` solo en el evento `submit`. Si envías el formulario por AJAX manual, debes borrarlo tú mismo.
+*   **Solución:**
+    ```javascript
+    // Si usas AJAX manual:
+    localStorage.removeItem('autosave_supervisor_nuevo_nombre');
+    ```
+
+### 5.2. Colisiones
+*   **Problema:** Al editar a "Juan" aparecen los datos de "Pedro".
+*   **Solución:** Verificar que en `editar.php` el ID sea dinámico:
+    ```html
+    <!-- INCORRECTO -->
+    <form data-autosave-id="supervisor_editar">
+    
+    <!-- CORRECTO -->
+    <form data-autosave-id="supervisor_<?= $id ?>">
+    ```
+
+---
+
+**Autor:** Equipo de Desarrollo PanelEv  
+**Documentación para:** Transferencia de Proyecto (Handover)

@@ -16,13 +16,12 @@
                     </div>
                 <?php endif; ?>
 
-                <!-- Formulario con Auto-Save JS -->
                 <form action="<?= $action ?>" method="post" class="auto-save" data-autosave-id="supervisor_nuevo">
 
                     <div class="mb-4">
                         <label class="form-label fw-semibold">Nombre Completo</label>
                         <input type="text" name="nombre" class="form-control form-control-lg"
-                            required>
+                            value="<?= set_value('nombre') ?>" required>
                     </div>
 
                     <div class="row g-3 mb-4">
@@ -42,6 +41,7 @@
                                     minlength="10" maxlength="10"
                                     pattern="\d{10}"
                                     title="Ingresa los 10 dígitos de tu número celular"
+                                    value="<?= set_value('telefono_sin_prefijo') ?>"
                                     required>
                             </div>
 
@@ -50,15 +50,16 @@
                         <div class="col-md-5">
                             <label class="form-label fw-semibold">Estatus</label>
                             <select name="activo" class="form-select form-select-lg">
-                                <option value="1" selected>Activo</option>
-                                <option value="0">Inactivo</option>
+                                <option value="1" <?= set_select('activo', '1', TRUE) ?>>Activo</option>
+                                <option value="0" <?= set_select('activo', '0') ?>>Inactivo</option>
                             </select>
                         </div>
                     </div>
 
                     <div class="mb-4">
                         <label class="form-label fw-semibold">Correo Electrónico</label>
-                        <input type="email" name="email" class="form-control form-control-lg">
+                        <input type="email" name="email" class="form-control form-control-lg"
+                            value="<?= set_value('email') ?>">
                     </div>
 
                     <div class="d-flex justify-content-center gap-3 mt-5">
