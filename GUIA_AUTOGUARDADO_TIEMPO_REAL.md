@@ -40,26 +40,76 @@ forms.forEach(form => {
 });
 ```
 
-### 2.2. Capa Servidor: Recuperación de Errores
-**Tecnología:** PHP (CodeIgniter Standard, Form Validation).  
-**Responsabilidad:** Persistencia de datos tras un intento de envío fallido (Error de Validación).
+### 2.2. Capa Servidor: Recuperación tras Error de Validación (CodeIgniter)
 
-**Implementación (Controlador):**
+Esta es la pieza clave para que el formulario no se "limpie" cuando el usuario lo envía y el servidor encuentra un error (ej. correo duplicado).
+
+**Flujo de Datos:**
+1.  **Usuario:** Llena el formulario y da click en "Guardar".
+2.  **Controlador:** Recibe los datos POST. Carga la librería `Form Validation`. Ejecuta las reglas.
+3.  **Fallo:** Si la validación falla (`run() == FALSE`), el Controlador **vuelve a cargar la Vista**.
+4.  **Vista:** Al renderizarse de nuevo, las funciones `set_value()` detectan que hubo un POST anterior fallido y **re-inyectan** los valores automáticamente.
+
+#### Archivos y Fragmentos Interrelacionados
+
+**A. El Controlador (`controllers/Supervisores.php`)**
+Debe cargar la librería de validación y definir las reglas antes de comprobar el estado.
+
 ```php
-// Ubicación: controllers/Supervisores.php
 public function guardar() {
-    $this->form_validation->set_rules('nombre', 'Nombre', 'required');
+    // 1. Cargar librería (si no está en autoload)
+    $this->load->library('form_validation');
 
+    // 2. Definir Reglas (Campo, Etiqueta, Reglas)
+    // 'required' fuerza que no venga vacío. 'is_unique' revisa DB.
+    $this->form_validation->set_rules('nombre', 'Nombre Completo', 'required|trim');
+    $this->form_validation->set_rules('email', 'Correo', 'required|valid_email|is_unique[supervisores.email]');
+
+    // 3. Ejecutar Validación
     if ($this->form_validation->run() == FALSE) {
-        // ERROR: La validación falló.
-        // CodeIgniter mantiene los datos del POST en memoria temporalmente.
-        $this->layout->view('supervisores/crear'); 
+        // CASO DE ERROR:
+        // CodeIgniter guarda internamente los datos del $_POST en un buffer temporal.
+        // Volvemos a cargar la vista 'crear'.
+        // OJO: No hacemos redirect(), solo cargamos la vista. Si rediriges, pierdes los datos.
+        
+        $data['titulo_pagina'] = 'Nuevo Supervisor';
+        $this->layout->view('supervisores/crear', $data);
+        
     } else {
-        // ÉXITO: Guardar en BD.
-        $this->msupervisores->insert($data);
-        // El script JS detectará el 'submit' exitoso y borrará el localStorage.
+        // CASO DE ÉXITO:
+        // Procesar y Guardar en BD...
+        $this->msupervisores->insert($datos);
+        redirect('supervisores');
     }
 }
+```
+
+**B. La Vista (`views/supervisores/crear.php`)**
+Debe usar los helpers `set_value()` y `set_select()` para recuperar esos datos del buffer temporal.
+
+```php
+<form action="<?= base_url('supervisores/guardar') ?>" method="post" ...>
+    
+    <!-- Muestra errores de validación individuales si existen -->
+    <?= form_error('nombre', '<div class="text-danger">', '</div>') ?>
+
+    <label>Nombre Completo</label>
+    <!-- set_value('nombre'): 
+         Si hubo POST, imprime $_POST['nombre']. 
+         Si no, imprime cadena vacía (o el segundo parámetro default). -->
+    <input type="text" name="nombre" value="<?= set_value('nombre') ?>">
+
+
+    <label>Estatus</label>
+    <select name="activo">
+        <!-- set_select('campo', 'valor_opcion'):
+             Marca este <option> como 'selected' si coincide con lo enviado. 
+             El tercer parámetro TRUE indica que es el default inicial. -->
+        <option value="1" <?= set_select('activo', '1', TRUE) ?>>Activo</option>
+        <option value="0" <?= set_select('activo', '0') ?>>Inactivo</option>
+    </select>
+
+</form>
 ```
 
 ---
