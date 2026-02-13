@@ -230,6 +230,78 @@
     <?php endif; ?>
 </script>
 
+<script>
+    /**
+     * Auto-Save en Formularios
+     * Permite que los formularios con la clase 'auto-save' persistan sus datos localmente mientras se editan.
+     * Se restauran automáticamente al cargar la página si no se han enviado.
+     */
+    document.addEventListener('DOMContentLoaded', function() {
+        const forms = document.querySelectorAll('form.auto-save');
+        // console.log("Auto-Save System: Detectados " + forms.length + " formularios.");
+
+        forms.forEach(form => {
+            const uniqueId = form.getAttribute('data-autosave-id');
+            if (!uniqueId) {
+                console.warn('Formulario con clase .auto-save no tiene atributo data-autosave-id. Ignorando.');
+                return;
+            }
+
+            const inputs = form.querySelectorAll('input:not([type="hidden"]):not([type="password"]), select, textarea');
+
+            // 1. RESTAURAR DATOS AL CARGAR
+            inputs.forEach(input => {
+                const key = `autosave_${uniqueId}_${input.name}`;
+                const savedValue = localStorage.getItem(key);
+
+                if (savedValue !== null && savedValue !== "") {
+                    // console.log("Restaurando " + input.name + ": " + savedValue);
+                    if (input.type === 'checkbox' || input.type === 'radio') {
+                        if (input.value === savedValue) {
+                            input.checked = true;
+                        }
+                    } else {
+                        input.value = savedValue;
+                    }
+                }
+            });
+
+            // 2. GUARDAR DATOS AL ESCRIBIR (Input / Change)
+            const saveHandler = (e) => {
+                const input = e.target;
+                if (!input.name || input.type === 'password' || input.type === 'hidden') return;
+
+                const key = `autosave_${uniqueId}_${input.name}`;
+                let valueToSave = input.value;
+
+                if (input.type === 'checkbox' || input.type === 'radio') {
+                    if (input.checked) {
+                        valueToSave = input.value;
+                    } else {
+                        // Si es checkbox y se desmarca, podríamos borrar o guardar vacío.
+                        // Para radio, solo guardamos el seleccionado.
+                        return;
+                    }
+                }
+
+                // console.log("Guardando " + input.name + ": " + valueToSave);
+                localStorage.setItem(key, valueToSave);
+            };
+
+            form.addEventListener('input', saveHandler);
+            form.addEventListener('change', saveHandler);
+
+            // 3. BORRAR DATOS AL ENVIAR EXITOSAMENTE
+            form.addEventListener('submit', () => {
+                // Limpiamos todo el storage asociado a este form
+                inputs.forEach(input => {
+                    const key = `autosave_${uniqueId}_${input.name}`;
+                    localStorage.removeItem(key);
+                });
+            });
+        });
+    });
+</script>
 </body>
 
 </html>

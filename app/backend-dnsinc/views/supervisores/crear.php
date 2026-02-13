@@ -16,11 +16,13 @@
                     </div>
                 <?php endif; ?>
 
-                <form action="<?= $action ?>" method="post">
+                <!-- Formulario con Auto-Save JS -->
+                <form action="<?= $action ?>" method="post" class="auto-save" data-autosave-id="supervisor_nuevo">
 
                     <div class="mb-4">
                         <label class="form-label fw-semibold">Nombre Completo</label>
-                        <input type="text" name="nombre" class="form-control form-control-lg" required>
+                        <input type="text" name="nombre" class="form-control form-control-lg"
+                            required>
                     </div>
 
                     <div class="row g-3 mb-4">
@@ -77,29 +79,3 @@
     </div>
 </div>
 <!-- NUEVO: funcion para detectar cambios en el formulario y mandar un modalde advertencia-->
-<script>
-    document.addEventListener('DOMContentLoaded', function() {
-        let formChanged = false;
-        const form = document.querySelector('form');
-        const backBtn = document.querySelector('a[href="<?= $backUrl ?>"]');
-
-        // Detectar cambios en el formulario
-        if (form) {
-            form.addEventListener('change', () => formChanged = true);
-            form.addEventListener('input', () => formChanged = true);
-
-            // Permitir el envío del formulario sin advertencia
-            form.addEventListener('submit', () => formChanged = false);
-        }
-
-        // Navegación nativa del navegador (Atrás, Cerrar pestaña, Recargar)
-        // Nota: Esto mostrará el diálogo genérico del navegador
-        window.addEventListener('beforeunload', function(e) {
-            if (formChanged) {
-                e.preventDefault();
-                // Algunos navegadores requieren returnValue para mostrar el diálogo estándar
-                e.returnValue = '';
-            }
-        });
-    });
-</script>

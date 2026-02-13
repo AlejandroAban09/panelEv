@@ -79,6 +79,7 @@ class Supervisores extends MY_Controller
         ];
 
         $this->msupervisores->insert($dataInsert);
+
         $this->session->set_flashdata('success', 'Supervisor registrado correctamente.');
         redirect('supervisores');
     }
