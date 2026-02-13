@@ -209,6 +209,3 @@ $user_id = $this->session->userdata('user_id');
     ```
 
 ---
-
-**Autor:** Equipo de Desarrollo PanelEv  
-**Documentación para:** Transferencia de Proyecto (Handover)
