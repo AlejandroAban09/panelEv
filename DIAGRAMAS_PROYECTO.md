@@ -83,42 +83,42 @@ erDiagram
 ```mermaid
 flowchart TD
     %% Inicio
-    A([Inicio: Incidencia Detectada]) --> B{¿Usuario Validado?}
-    
+    A(["Inicio: Incidencia Detectada"]) --> B{"¿Usuario Validado?"}
+
     %% Validación de Usuario/Acceso
-    B -- No --> C[Bloquear Acceso / Error]
-    B -- Sí --> D[Seleccionar Tienda y Tipo]
+    B -- No --> C["Bloquear Acceso / Error"]
+    B -- Sí --> D["Seleccionar Tienda y Tipo"]
 
     %% Generación de Ticket
-    subgraph Creación
-    D --> E{¿Datos Correctos?}
+    subgraph Creacion ["Creación"]
+    D --> E{"¿Datos Correctos?"}
     E -- No --> D
-    E -- Sí --> F[Crear Ticket (Estado: ABIERTO)]
-    F --> G[Guardar en BD]
+    E -- Sí --> F["Crear Ticket (Estado: ABIERTO)"]
+    F --> G["Guardar en BD"]
     end
 
     %% Notificaciones
     subgraph Notificaciones
-    G --> H{¿Requiere Alerta Inmediata?}
-    H -- Sí --> I[Enviar Whatsapp a Gerente/Supervisor]
-    H -- No --> J[Mostrar en Dashboard]
+    G --> H{"¿Requiere Alerta Inmediata?"}
+    H -- Sí --> I["Enviar Whatsapp a Gerente/Supervisor"]
+    H -- No --> J["Mostrar en Dashboard"]
     I --> J
     end
 
     %% Gestión
-    subgraph Gestión Operativa
-    J --> K[Operador (Rol 2) Revisa Ticket]
-    K --> L{¿Solucionado / Validado?}
+    subgraph GestionOperativa ["Gestión Operativa"]
+    J --> K["Operador (Rol 2) Revisa Ticket"]
+    K --> L{"¿Solucionado / Validado?"}
     
-    L -- No (Pendiente) --> M[Agregar Comentario / Seguimiento]
+    L -- "No (Pendiente)" --> M["Agregar Comentario / Seguimiento"]
     M --> K
     
-    L -- Sí (Cerrar) --> N[Cambiar Estado a CERRADO]
+    L -- "Sí (Cerrar)" --> N["Cambiar Estado a CERRADO"]
     end
 
     %% Cierre
-    N --> O[Actualizar 'closed_at' y 'closed_by']
-    O --> P([Fin del Proceso])
+    N --> O["Actualizar 'closed_at' y 'closed_by'"]
+    O --> P(["Fin del Proceso"])
 ```
 
 ## 3. Diagrama de Casos de Uso (Funcional)
