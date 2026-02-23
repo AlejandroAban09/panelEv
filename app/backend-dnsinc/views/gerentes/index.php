@@ -6,7 +6,8 @@
 
     <div class="d-flex align-items-center gap-3">
         <?php $themeMode = get_cookie('theme_mode'); ?>
-        <a href="#" class="text-white theme-switcher" style="font-size: 1.2rem;">
+        <!-- aria-label para que lectores de pantalla identifiquen el boton de tema -->
+        <a href="#" class="text-white theme-switcher" style="font-size: 1.2rem;" aria-label="Cambiar tema">
             <i class="bi <?= ($themeMode === 'dark') ? 'bi-sun-fill' : 'bi-moon-fill' ?>"></i>
         </a>
         <div><?= $usuario['usuario_nombre'] ?? 'Usuario' ?></div>
@@ -16,15 +17,17 @@
 <div class="content" id="main-content">
     <!-- titulo -->
     <div class="d-flex justify-content-between align-items-center mb-4">
-        <h2 class="fw-bold text-brand">
+        <!-- Titulo principal de la pagina (h1 unico por pagina, buena practica SEO) -->
+        <h1 class="fw-bold text-brand" style="font-size:1.5rem;">
             <span>
-                <img class="img-fluid icon-light-mode" src="assets/images/gerente-azul.png" alt="" width="35" style="margin-top: -5px;">
-                <img class="img-fluid icon-dark-mode" src="assets/images/gerente-blanco.png" alt="" width="35" style="margin-top: -5px; display: none;">
+                <img class="img-fluid icon-light-mode" src="assets/images/gerente-azul.png" alt="Icono gerentes" width="35" style="margin-top: -5px;">
+                <img class="img-fluid icon-dark-mode" src="assets/images/gerente-blanco.png" alt="Icono gerentes" width="35" style="margin-top: -5px; display: none;">
             </span>
             Gerentes
-        </h2>
+        </h1>
         <!-- boton de crear -->
-        <a href="<?= base_url('gerentes/crear') ?>" class="btn btn-primary rounded-pill px-3 shadow-sm">
+        <!-- aria-label para que lectores de pantalla identifiquen la accion del boton -->
+        <a href="<?= base_url('gerentes/crear') ?>" class="btn btn-primary rounded-pill px-3 shadow-sm" aria-label="Nuevo gerente">
             <i class="bi bi-plus-circle"></i> <span class="d-none d-md-inline">Nuevo</span>
         </a>
     </div>
@@ -51,7 +54,8 @@
                                 <td><?= $g->nombre ?></td>
                                 <!-- Columna de Tiendas -->
                                 <td>
-                                    <span class="badge bg-info bg-opacity-10 text-success border border-success border-opacity-25 rounded-pill">
+                                    <!-- text-dark garantiza contraste suficiente sobre fondo claro (WCAG AA) -->
+                                    <span class="badge bg-success bg-opacity-10 text-dark border border-success border-opacity-50 rounded-pill fw-semibold">
                                         <?= $g->telefono ?>
                                     </span>
                                 </td>

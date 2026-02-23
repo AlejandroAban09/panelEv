@@ -6,7 +6,8 @@
 
     <div class="d-flex align-items-center gap-3">
         <?php $themeMode = get_cookie('theme_mode'); ?>
-        <a href="#" class="text-white theme-switcher" style="font-size: 1.2rem;">
+        <!-- aria-label para que lectores de pantalla identifiquen el boton de tema -->
+        <a href="#" class="text-white theme-switcher" style="font-size: 1.2rem;" aria-label="Cambiar tema">
             <i class="bi <?= ($themeMode === 'dark') ? 'bi-sun-fill' : 'bi-moon-fill' ?>"></i>
         </a>
         <div><?= $usuario['usuario_nombre'] ?></div>
@@ -15,15 +16,17 @@
 
 <div class="content" id="main-content">
     <div class="d-flex justify-content-between align-items-center mb-4">
-        <h2 class="fw-bold text-brand">
+        <!-- Titulo principal de la pagina (h1 unico por pagina, buena practica SEO) -->
+        <h1 class="fw-bold text-brand" style="font-size:1.5rem;">
             <span>
-                <img class="img-fluid icon-light-mode" src="assets/images/encargados.png" alt="" width="35" style="margin-top: -5px;">
-                <img class="img-fluid icon-dark-mode" src="assets/images/encargados-white.png" alt="" width="35" style="margin-top: -5px; display: none;">
+                <img class="img-fluid icon-light-mode" src="assets/images/encargados.png" alt="Icono usuarios" width="35" style="margin-top: -5px;">
+                <img class="img-fluid icon-dark-mode" src="assets/images/encargados-white.png" alt="Icono usuarios" width="35" style="margin-top: -5px; display: none;">
             </span>
             Usuarios
-        </h2>
+        </h1>
 
-        <a href="<?= base_url('usuarios/crear') ?>" class="btn btn-primary rounded-pill px-3 shadow-sm">
+        <!-- aria-label para que lectores de pantalla identifiquen la accion del boton -->
+        <a href="<?= base_url('usuarios/crear') ?>" class="btn btn-primary rounded-pill px-3 shadow-sm" aria-label="Nuevo usuario">
             <i class="bi bi-plus-circle"></i> <span class="d-none d-md-inline">Nuevo</span>
         </a>
     </div>

@@ -7,7 +7,8 @@
     <div class="d-flex align-items-center gap-3">
         <!-- Dark Mode Toggle -->
         <?php $themeMode = get_cookie('theme_mode'); ?>
-        <a href="#" class="text-white theme-switcher" style="font-size: 1.2rem;">
+        <!-- aria-label para que lectores de pantalla identifiquen el boton de tema -->
+        <a href="#" class="text-white theme-switcher" style="font-size: 1.2rem;" aria-label="Cambiar tema">
             <i class="bi <?= ($themeMode === 'dark') ? 'bi-sun-fill' : 'bi-moon-fill' ?>"></i>
         </a>
 
@@ -20,7 +21,8 @@
 <div class="content" id="main-content">
 
     <div class="d-flex justify-content-between align-items-center mb-4">
-        <h2 class="fw-bold text-brand"><span> <img class="img-fluid" src="assets/images/home.png" alt="" width="35" style="margin-top: -11px;"> </span>Panel</h2>
+        <!-- Titulo principal de la pagina (h1 unico por pagina, buena practica SEO) -->
+        <h1 class="fw-bold text-brand" style="font-size:1.5rem;"><span> <img class="img-fluid" src="assets/images/home.png" alt="Icono panel" width="35" style="margin-top: -11px;"> </span>Panel</h1>
     </div>
 
     <div class="row g-4">

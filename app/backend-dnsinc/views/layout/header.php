@@ -5,8 +5,24 @@
     <meta charset="UTF-8">
     <title><?= isset($title) ? $title : 'Panel de Administración' ?></title>
 
+    <!-- Descripcion general del sistema para navegadores y herramientas de desarrollo -->
+    <meta name="description" content="Panel de administración y registro de evidencias - DunoSusa.">
+
+    <!-- Evita que los buscadores indexen el panel, ya que es un sistema privado -->
+    <meta name="robots" content="noindex, nofollow">
+
     <base href="<?php echo base_url(); ?>">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- Favicon del sistema -->
+    <link rel="icon" href="<?= base_url('assets/images/icono.png') ?>" type="image/png">
+
+    <!-- Preconnect: le indica al navegador que prepare conexion anticipada con los CDN -->
+    <!-- Esto reduce la latencia de descarga de Bootstrap, DataTables y jQuery en movil -->
+    <link rel="preconnect" href="https://cdn.jsdelivr.net">
+    <link rel="preconnect" href="https://cdn.datatables.net">
+    <link rel="preconnect" href="https://code.jquery.com">
+
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
 
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">

@@ -6,7 +6,8 @@
 
     <div class="d-flex align-items-center gap-3">
         <?php $themeMode = get_cookie('theme_mode'); ?>
-        <a href="#" class="text-white theme-switcher" style="font-size: 1.2rem;">
+        <!-- aria-label para que lectores de pantalla identifiquen el boton de tema -->
+        <a href="#" class="text-white theme-switcher" style="font-size: 1.2rem;" aria-label="Cambiar tema">
             <i class="bi <?= ($themeMode === 'dark') ? 'bi-sun-fill' : 'bi-moon-fill' ?>"></i>
         </a>
         <div><?= $usuario['usuario_nombre'] ?></div>
@@ -15,13 +16,14 @@
 
 <div class="content" id="main-content">
 
-    <h2 class="fw-bold text-brand">
+    <!-- Titulo principal de la pagina (h1 unico por pagina, buena practica SEO) -->
+    <h1 class="fw-bold text-brand" style="font-size:1.5rem;">
         <span>
-            <img class="img-fluid icon-light-mode" src="assets/images/tickets.png" alt="" width="35" style="margin-top: -5px;">
-            <img class="img-fluid icon-dark-mode" src="assets/images/tickets-white.png" alt="" width="35" style="margin-top: -5px; display: none;">
+            <img class="img-fluid icon-light-mode" src="assets/images/tickets.png" alt="Icono evidencias" width="35" style="margin-top: -5px;">
+            <img class="img-fluid icon-dark-mode" src="assets/images/tickets-white.png" alt="Icono evidencias" width="35" style="margin-top: -5px; display: none;">
         </span>
         Evidencias registradas <?php echo ($tipo != '') ? ' - ' . $tipo : ''; ?>
-    </h2>
+    </h1>
 
     <div class="card shadow-sm border-0">
         <div class="card-body">
