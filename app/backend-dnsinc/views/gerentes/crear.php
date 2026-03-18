@@ -13,7 +13,7 @@
                         <?= !empty($error) ? $error : validation_errors() ?>
                     </div>
                 <?php endif; ?>
-                <form action="<?= $action ?>" method="post">
+                <form action="<?= $action ?>" method="post" class="auto-save" data-autosave-id="form_crear_gerente">
                     <div class="mb-4">
                         <label class="form-label fw-semibold">Nombre Completo</label>
                         <input type="text" name="nombre" class="form-control form-control-lg" required>

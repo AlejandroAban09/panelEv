@@ -106,7 +106,7 @@ class Usuarios extends MY_Controller {
         $dataInsert = [
             'nombre'             => $this->input->post('nombre', true),
             'usuario'            => $usuario,
-            'password'           => sha1($password),
+            'password'           => password_hash($password, PASSWORD_BCRYPT),
             'rol'                => 2,
             'tipo_id'            => implode(',', $tipos_ids),
             'activo'             => $this->input->post('activo'),
@@ -196,7 +196,7 @@ class Usuarios extends MY_Controller {
 
         // Password opcional
         if (!empty($password)) {
-            $update['password'] = sha1($password);
+            $update['password'] = password_hash($password, PASSWORD_BCRYPT);
         }
 
         $this->musuarios->updateData($id, $update);

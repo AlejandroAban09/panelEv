@@ -6,11 +6,21 @@ class Musuarios extends MY_Model
     public function login($usuario, $password_plain)
     {
         $this->db->where('usuario', $usuario);
-        $this->db->where('password', sha1($password_plain));
         $this->db->where('activo', 1);
-        $query = $this->db->get($this->table);
+        $user = $this->db->get($this->table)->row();
 
-        return $query->row(); // objeto o null
+        if ($user) {
+            // Verificación con Bcrypt (Estándar de seguridad reportado)
+            if (password_verify($password_plain, $user->password)) {
+                return $user;
+            }
+            // Fallback temporal para hashes SHA1 previos
+            if (sha1($password_plain) === $user->password) {
+                return $user;
+            }
+        }
+
+        return null; // Usuario no encontrado o contraseña incorrecta
     }
 
     public function getAll()

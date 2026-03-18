@@ -39,7 +39,7 @@ class Migracion extends MY_Controller
                         'nombre' => $gerenteVal,
                         'telefono' => '520000000000', // Placeholder
                         'email' => null,
-                        'activo' => 1
+                        'activo' => 1,
                     ];
                     $this->db->insert('gerentes', $dataInsert);
                     $newId = $this->db->insert_id();
@@ -96,14 +96,14 @@ class Migracion extends MY_Controller
         foreach ($tablas as $tabla) {
             // Verificar si la tabla existe
             if (!$this->db->table_exists($tabla)) {
-                echo "<p style='color:red'>La tabla <strong>$tabla</strong> no existe. Saltando...</p>";
+                echo "La tabla <strong>$tabla</strong> no existe. Saltando...";
                 continue;
             }
 
             // Verificar si la columna ya existe
             $fields = $this->db->list_fields($tabla);
             if (in_array('deleted_at', $fields)) {
-                echo "<p style='color:orange'>La tabla <strong>$tabla</strong> ya tiene la columna 'deleted_at'.</p>";
+                echo "La tabla <strong>$tabla</strong> ya tiene la columna 'deleted_at'.";
             } else {
                 // Agregar columna
                 $sql = "ALTER TABLE `$tabla` ADD COLUMN `deleted_at` DATETIME NULL DEFAULT NULL AFTER `activo`";
@@ -113,9 +113,9 @@ class Migracion extends MY_Controller
                 }
 
                 if ($this->db->query($sql)) {
-                    echo "<p style='color:green'>✅ Columna 'deleted_at' agregada a <strong>$tabla</strong>.</p>";
+                    echo "Columna 'deleted_at' agregada a <strong>$tabla</strong>.";
                 } else {
-                    echo "<p style='color:red'>❌ Error al agregar columna a <strong>$tabla</strong>.</p>";
+                    echo "Error al agregar columna a <strong>$tabla</strong>.";
                 }
             }
         }

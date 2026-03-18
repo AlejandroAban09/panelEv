@@ -380,6 +380,36 @@
             });
         });
     });
+
+    /**
+ * SISTEMA DE PERSISTENCIA TEMPORAL (AUTO-SAVE)
+ * Guarda los datos del formulario en el navegador para evitar pérdida de información.
+ */
+document.addEventListener('DOMContentLoaded', () => {
+    const forms = document.querySelectorAll('form.auto-save');
+
+    forms.forEach(form => {
+        const id = form.getAttribute('data-autosave-id');
+        const inputs = form.querySelectorAll('input, select, textarea');
+
+        // 1. Restaurar datos: Al cargar, busca valores guardados previamente
+        inputs.forEach(input => {
+            const savedValue = localStorage.getItem(`autosave_${id}_${input.name}`);
+            if (savedValue) input.value = savedValue;
+        });
+
+        // 2. Guardado en tiempo real: Escucha cambios y actualiza el localStorage
+        form.addEventListener('input', (e) => {
+            localStorage.setItem(`autosave_${id}_${e.target.name}`, e.target.value);
+        });
+
+        // 3. Limpieza: Borra los datos temporales cuando el formulario se envía con éxito
+        form.addEventListener('submit', () => {
+            inputs.forEach(i => localStorage.removeItem(`autosave_${id}_${i.name}`));
+        });
+    });
+});
+
 </script>
 </body>
 

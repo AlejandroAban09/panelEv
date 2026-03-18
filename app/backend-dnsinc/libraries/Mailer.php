@@ -19,21 +19,16 @@ class Mailer {
             $mail->Password   = '1#07B8@Nbu14';
             $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
             $mail->Port       = 587;
-
             $mail->CharSet = 'UTF-8';
             $mail->Encoding = 'quoted-printable'; 
             $mail->isHTML(true);
-
             $mail->setFrom('incidencias@dunosusa.mx', 'Sistema de Incidencias');
-
             foreach ($destinatarios as $email) {
                 $email = trim($email);
                 if ($email !== '') $mail->addAddress($email);
             }
-
             $mail->Subject = $asunto;
             $mail->Body    = $html;
-
             if (!empty($adjunto) && file_exists($adjunto)) {
                 $mail->addAttachment($adjunto);
             }
