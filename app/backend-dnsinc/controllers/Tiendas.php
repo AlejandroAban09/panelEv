@@ -16,9 +16,7 @@ class Tiendas extends MY_Controller
         $this->data['fjs'] = '';
         $this->data['js'] = '';
         $this->data['css'] = '';
-
         $this->load->model(array('mtiendas', 'mgerentes', 'msupervisores'));
-
         $this->load->library('form_validation');
     }
 
@@ -28,9 +26,7 @@ class Tiendas extends MY_Controller
         //$data['title'] = "Tiendas";
         $data['menu'] = "tiendas";
         $data['tiendas'] = $this->mtiendas->getAll();
-
         //$data['usuario'] = $this->data['usuario'];
-
         $this->load->view('layout/header', $data);
         $this->load->view('layout/sidebar', $data);
         $this->load->view('tiendas/index', $data);
@@ -42,18 +38,15 @@ class Tiendas extends MY_Controller
         $data = array_merge($this->data, $extraData);
         //$data['title'] = "Nueva Tienda";
         $data['menu'] = "tiendas";
-        $data['headline'] = "➕ Nueva Tienda";
+        $data['headline'] = "Nueva Tienda";
         $data['subheadline'] = "Registra una tienda y su centro de costo.";
         $data['backUrl'] = base_url('tiendas');
         $data['action'] = base_url('tiendas/guardar');
-
         // Obtener lista de gerentes activos
         $data['gerentes'] = $this->mgerentes->getAll();
         // Obtener lista de supervisores activos
         $data['supervisores'] = $this->msupervisores->getAll();
-
         //$data['usuario'] = $this->data['usuario'];
-
         $this->load->view('layout/header', $data);
         $this->load->view('layout/sidebar', $data);
         $this->load->view('tiendas/crear', $data);
@@ -64,12 +57,10 @@ class Tiendas extends MY_Controller
     {
         $this->form_validation->set_rules('nombre', 'Nombre de la tienda', 'required|trim|is_unique[tiendas.nombre]');
         $this->form_validation->set_rules('centro_costo', 'Centro de costo', 'required|trim|is_unique[tiendas.centro_costo]');
-
         if ($this->form_validation->run() === FALSE) {
             $this->crear(['error' => validation_errors()]);
             return;
         }
-
         $data = [
             "nombre" => $this->input->post("nombre"),
             "centro_costo" => $this->input->post("centro_costo"),
@@ -77,7 +68,6 @@ class Tiendas extends MY_Controller
             "supervisor" => $this->input->post("supervisor_id"), // Guardamos el ID del supervisor
             'activo' => $this->input->post('activo'),
         ];
-
         $this->mtiendas->insert($data);
         $this->session->set_flashdata('success', 'Tienda registrada correctamente.');
         redirect("tiendas");
@@ -88,12 +78,11 @@ class Tiendas extends MY_Controller
         $data = array_merge($this->data, $extraData);
         //$data['title'] = "Editar Tienda";
         $data['menu'] = "tiendas";
-        $data['headline'] = "✏️ Editar Tienda";
+        $data['headline'] = "Editar Tienda";
         $data['subheadline'] = "Actualiza el nombre o centro de costo.";
         $data['backUrl'] = base_url('tiendas');
         $data['action'] = base_url('tiendas/actualizar/' . $id);
         $tienda = $this->mtiendas->getById($id);
-
         if ($this->input->post()) {
             $tienda->nombre = $this->input->post('nombre');
             $tienda->centro_costo = $this->input->post('centro_costo');
@@ -101,16 +90,12 @@ class Tiendas extends MY_Controller
             $tienda->supervisor = $this->input->post('supervisor_id');
             $tienda->activo = $this->input->post('activo');
         }
-
         $data['tienda'] = $tienda;
-
         // Obtener lista de gerentes activos
         $data['gerentes'] = $this->mgerentes->getAll();
         // Obtener lista de supervisores activos
         $data['supervisores'] = $this->msupervisores->getAll();
-
         //$data['usuario'] = $this->data['usuario'];
-
         $this->load->view('layout/header', $data);
         $this->load->view('layout/sidebar', $data);
         $this->load->view('tiendas/editar', $data);
@@ -122,19 +107,16 @@ class Tiendas extends MY_Controller
         // Validacion manual de unicidad excluyendo el ID actual
         $nombre = $this->input->post("nombre");
         $cc = $this->input->post("centro_costo");
-
         $existeNombre = $this->db->where('nombre', $nombre)->where('id !=', $id)->get('tiendas')->row();
         if ($existeNombre) {
             $this->editar($id, ['error' => "El nombre de la tienda ya existe."]);
             return;
         }
-
         $existeCC = $this->db->where('centro_costo', $cc)->where('id !=', $id)->get('tiendas')->row();
         if ($existeCC) {
             $this->editar($id, ['error' => "El centro de costo ya existe."]);
             return;
         }
-
         $data = [
             "nombre"        => $this->input->post("nombre"),
             "centro_costo"  => $this->input->post("centro_costo"),
@@ -142,7 +124,6 @@ class Tiendas extends MY_Controller
             "supervisor"    => $this->input->post("supervisor_id"), // Actualizamos ID
             'activo' => $this->input->post('activo'),
         ];
-
         $this->mtiendas->updateData($id, $data);
         $this->session->set_flashdata('success', 'Tienda actualizada correctamente.');
         redirect("tiendas");

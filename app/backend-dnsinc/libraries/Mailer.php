@@ -10,7 +10,6 @@ class Mailer {
     {
         try {
             $mail = new PHPMailer(true);
-
             // SMTP (pon tus datos reales)
             $mail->isSMTP();
             $mail->Host       = 'mxa.web-hostingmx.com';
@@ -32,10 +31,8 @@ class Mailer {
             if (!empty($adjunto) && file_exists($adjunto)) {
                 $mail->addAttachment($adjunto);
             }
-
             $mail->send();
             return true;
-
         } catch (Exception $e) {
             log_message('error', 'Mailer error: '.$e->getMessage());
             return false;

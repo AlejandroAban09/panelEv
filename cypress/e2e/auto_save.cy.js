@@ -26,14 +26,11 @@ describe('Pruebas de Caja Negra - Persistencia de Datos (Auto-Save)', () => {
   it('Escenario 1: Debe persistir el nombre y email al recargar la página', () => {
     const nombrePrueba = 'Alejandro Aban - Test';
     const emailPrueba = 'test.cypress@dunosusa.com';
-
     // 1. Llenar los campos
     cy.get('input[name="nombre"]').clear().type(nombrePrueba);
     cy.get('input[name="email"]').clear().type(emailPrueba);
-
     // 2. Simular recarga inesperada o navegación (F5)
     cy.reload();
-
     // 3. Verificar que los valores sigan ahí (Caja Negra)
     cy.get('input[name="nombre"]').should('have.value', nombrePrueba);
     cy.get('input[name="email"]').should('have.value', emailPrueba);
