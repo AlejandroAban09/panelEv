@@ -42,90 +42,6 @@
     </div>
 </div>
 
-<script>
-    // Función Global para mostrar el modal
-    function showGlobalAlert(type, message) {
-        const modalEl = document.getElementById('globalAlertModal');
-        const header = document.getElementById('globalModalHeader');
-        const icon = document.getElementById('globalModalIcon');
-        const bodyIcon = document.getElementById('globalModalBodyIcon');
-        const label = document.getElementById('globalModalLabel');
-        const bodyTitle = document.getElementById('globalModalBodyTitle');
-        const msgText = document.getElementById('globalModalMessage');
-        const bsModal = new bootstrap.Modal(modalEl);
-
-        // Reset classes
-        header.className = 'modal-header text-white border-0';
-        icon.className = 'bi me-2';
-        bodyIcon.className = 'bi';
-
-        if (type === 'error') {
-            header.style.backgroundColor = '#dc3545'; // Rojo Bootstrap
-            icon.classList.add('bi-exclamation-triangle-fill');
-            bodyIcon.classList.add('bi-x-circle-fill', 'text-danger');
-            label.textContent = 'Error Detectado';
-            bodyTitle.textContent = '¡Ups! Algo salió mal';
-        } else if (type === 'success') {
-            header.style.backgroundColor = '#198754'; // Verde Bootstrap
-            icon.classList.add('bi-check-circle-fill');
-            bodyIcon.classList.add('bi-check-circle-fill', 'text-success');
-            label.textContent = 'Operación Exitosa';
-            bodyTitle.textContent = '¡Todo salió bien!';
-        } else {
-            // Info / Default (#040051)
-            header.style.backgroundColor = '#040051';
-            icon.classList.add('bi-info-circle-fill');
-            bodyIcon.classList.add('bi-info-circle-fill');
-            bodyIcon.style.color = '#040051';
-            label.textContent = 'Información';
-            bodyTitle.textContent = 'Aviso del Sistema';
-        }
-
-        msgText.innerHTML = message;
-        bsModal.show();
-    }
-
-    <?php
-    $alertType = '';
-    $alertMsg = '';
-
-    // Prioridad de detección de mensajes
-    if (isset($error) && !empty($error)) {
-        $alertType = 'error';
-        $alertMsg = $error;
-    } elseif (function_exists('validation_errors') && !empty(validation_errors())) {
-        $alertType = 'error';
-        $alertMsg = validation_errors();
-    } elseif (isset($_SESSION['error']) && !empty($_SESSION['error'])) {
-        //$alertType = 'error';
-        //$alertMsg = $_SESSION['error'];
-        // Usando flashdata de CI3 style si session directo falla, 
-        // pero $this->session->flashdata('error') es preferible si session library cargada
-    }
-
-    // Check CodeIgniter Flashdata via instance access in View is tricky depending on context, 
-    // better to rely on what Controllers pass or global session access.
-    // Assuming standard CI3 $this->session is available in views usually.
-    /* 
-    // DESACTIVADO: Se usará SweetAlert2 (Toasts) en su lugar para mensajes de sesión.
-    if (empty($alertMsg) && isset($this->session)) {
-        if ($this->session->flashdata('error')) {
-            $alertType = 'error';
-            $alertMsg = $this->session->flashdata('error');
-        } elseif ($this->session->flashdata('success')) {
-            $alertType = 'success';
-            $alertMsg = $this->session->flashdata('success');
-        }
-    } 
-    */
-
-    if (!empty($alertType) && !empty($alertMsg)) {
-        $jsMsg = json_encode($alertMsg);
-        echo "document.addEventListener('DOMContentLoaded', function() { showGlobalAlert('$alertType', $jsMsg); });";
-    }
-    ?>
-</script>
-
 <!-- defer garantiza que datatable-init.js espere a que jQuery este cargado -->
 <script src="<?= base_url('assets/js/datatable-init.js') ?>" defer></script>
 
@@ -380,36 +296,6 @@
             });
         });
     });
-
-    /**
- * SISTEMA DE PERSISTENCIA TEMPORAL (AUTO-SAVE)
- * Guarda los datos del formulario en el navegador para evitar pérdida de información.
- */
-document.addEventListener('DOMContentLoaded', () => {
-    const forms = document.querySelectorAll('form.auto-save');
-
-    forms.forEach(form => {
-        const id = form.getAttribute('data-autosave-id');
-        const inputs = form.querySelectorAll('input, select, textarea');
-
-        // 1. Restaurar datos: Al cargar, busca valores guardados previamente
-        inputs.forEach(input => {
-            const savedValue = localStorage.getItem(`autosave_${id}_${input.name}`);
-            if (savedValue) input.value = savedValue;
-        });
-
-        // 2. Guardado en tiempo real: Escucha cambios y actualiza el localStorage
-        form.addEventListener('input', (e) => {
-            localStorage.setItem(`autosave_${id}_${e.target.name}`, e.target.value);
-        });
-
-        // 3. Limpieza: Borra los datos temporales cuando el formulario se envía con éxito
-        form.addEventListener('submit', () => {
-            inputs.forEach(i => localStorage.removeItem(`autosave_${id}_${i.name}`));
-        });
-    });
-});
-
 </script>
 </body>
 

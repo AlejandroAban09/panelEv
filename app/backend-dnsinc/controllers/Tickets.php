@@ -17,7 +17,6 @@ class Tickets extends MY_Controller {
             $this->load->model(array('mtickets', 'mincidencias'));
             $this->load->library('mailer');
     }
-
     public function index() {
         $data = $this->data;
         //$data['title'] = "Tickets";
@@ -46,7 +45,6 @@ class Tickets extends MY_Controller {
         $this->load->view('tickets/index', $data);
         $this->load->view('layout/footer');
     }
-
     public function detalle($id) {
         $data = $this->data;
         //$data['title'] = "Detalle del Ticket";
@@ -65,7 +63,6 @@ class Tickets extends MY_Controller {
         $this->load->view('tickets/detalle', $data);
         $this->load->view('layout/footer');
     }
-
     public function cerrar($id)
     {
         $data = $this->data;

@@ -101,7 +101,6 @@ class Tiendas extends MY_Controller
         $this->load->view('tiendas/editar', $data);
         $this->load->view('layout/footer');
     }
-
     public function actualizar($id)
     {
         // Validacion manual de unicidad excluyendo el ID actual
@@ -128,7 +127,6 @@ class Tiendas extends MY_Controller
         $this->session->set_flashdata('success', 'Tienda actualizada correctamente.');
         redirect("tiendas");
     }
-
     public function eliminar($id)
     {
         $this->mtiendas->deleteData($id);
